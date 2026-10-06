@@ -1,0 +1,910 @@
+<title>P1S Printing Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky chapter rail on the left (a print-progress gauge on top), one reading column on the right; on phones the rail becomes a sticky "Chapter" bar that opens the menu. */
+:root {
+  --bg: #f3f6f6;
+  --surface: #ffffff;
+  --fg: #172124;
+  --muted: #56666b;
+  --line: #d5dee0;
+  --accent: #0a6f6a;
+  --accent-soft: #dcefed;
+  --code-bg: #e9efef;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --rail: 268px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1517; --surface: #162023; --fg: #e3eaeb; --muted: #94a3a7; --line: #283438;
+    --accent: #52c3b9; --accent-soft: #173533; --code-bg: #1d2a2d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1517; --surface: #162023; --fg: #e3eaeb; --muted: #94a3a7; --line: #283438;
+  --accent: #52c3b9; --accent-soft: #173533; --code-bg: #1d2a2d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--bg); color: var(--fg); font: 16px/1.65 var(--body); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.shell { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); max-width: 1180px; margin: 0 auto; padding-inline: 16px; gap: 48px; }
+
+/* ---------- rail ---------- */
+.rail { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; max-height: 100vh; overflow-y: auto; padding-block: 28px; }
+.brand { font-family: var(--display); font-weight: 800; font-stretch: 112%; font-size: 15px; letter-spacing: .02em; text-transform: uppercase; color: var(--fg); text-decoration: none; display: block; line-height: 1.25; }
+.brand small { display: block; font-family: var(--mono); font-weight: 400; font-size: 11.5px; letter-spacing: .04em; text-transform: none; color: var(--muted); margin-top: 4px; }
+.gauge { margin-block: 20px 14px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.gauge-top { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.gauge-top b { color: var(--fg); font-weight: 500; }
+.track { margin-top: 8px; height: 6px; border-radius: 3px; background: var(--code-bg); overflow: hidden; }
+.fill { height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.toc { list-style: none; margin: 0; padding: 0; }
+.toc .grp { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 14px 10px 4px; }
+.toc .grp-end { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; }
+.toc a { display: flex; gap: 10px; align-items: baseline; padding: 6px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 14.5px; line-height: 1.35; }
+.toc a .num { font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 2ch; }
+.toc a:hover { background: var(--code-bg); }
+.toc a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.toc a.active .num { color: var(--accent); }
+
+/* ---------- main ---------- */
+main { min-width: 0; padding-block: 28px 80px; }
+.hero { padding-block: 12px 28px; border-bottom: 1px solid var(--line); }
+.hero .kicker { font-family: var(--mono); font-size: 12.5px; color: var(--muted); letter-spacing: .03em; }
+.hero h1 { font-family: var(--display); font-weight: 800; font-stretch: 108%; font-size: clamp(30px, 5vw, 46px); line-height: 1.06; letter-spacing: -.01em; margin: 10px 0 14px; text-wrap: balance; max-width: 18ch; }
+.hero p.lead { font-size: 18px; color: var(--muted); max-width: 62ch; margin: 0; }
+.specs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; padding: 0; list-style: none; }
+.specs li { font-family: var(--mono); font-size: 12.5px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+
+.journey { margin-top: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.journey h2 { font-family: var(--display); font-size: 20px; margin: 0 0 2px; }
+.journey p { margin: 0 0 8px; color: var(--muted); font-size: 14.5px; }
+.diagram { overflow-x: auto; }
+.diagram svg { width: 100%; min-width: 560px; height: auto; display: block; }
+.diagram .title { font: 600 15px var(--body); fill: var(--fg); }
+.diagram .edges line { stroke: var(--muted); stroke-opacity: .55; stroke-width: 1.25; }
+.diagram .arrowhead { fill: var(--muted); fill-opacity: .7; }
+.diagram .node rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.25; transition: fill .15s, stroke .15s; }
+.diagram .node.main rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+.diagram .node:hover rect, .diagram .node:focus-visible rect { stroke: var(--accent); fill: var(--accent-soft); }
+.diagram .node .n { font: 600 13px var(--body); fill: var(--fg); text-anchor: middle; }
+.diagram .node .s { font: 400 11.5px var(--body); fill: var(--muted); text-anchor: middle; }
+
+.chapter { padding-block: 44px 8px; border-bottom: 1px solid var(--line); }
+.ch-head .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 0; }
+.ch-head h2 { font-family: var(--display); font-weight: 750; font-stretch: 104%; font-size: clamp(24px, 3.4vw, 32px); line-height: 1.15; margin: 6px 0 4px; text-wrap: balance; max-width: 26ch; }
+.prose { max-width: 70ch; }
+.prose h3 { font-family: var(--display); font-weight: 650; font-size: 19px; margin: 30px 0 6px; text-wrap: balance; }
+.prose p, .prose ul, .prose ol { margin: 0 0 14px; }
+.prose ul, .prose ol { padding-left: 1.3em; }
+.prose li { margin-bottom: 6px; }
+.prose li::marker { color: var(--muted); }
+.prose strong { font-weight: 600; }
+.prose em { font-style: italic; }
+.table-wrap { overflow-x: auto; margin: 6px 0 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.prose table { border-collapse: collapse; width: 100%; font-size: 14.5px; line-height: 1.45; }
+.prose th, .prose td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+.prose th { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); background: var(--code-bg); white-space: nowrap; }
+.prose tr:last-child td { border-bottom: 0; }
+.prose td { font-variant-numeric: tabular-nums; }
+
+.checklist { list-style: none; padding-left: 0 !important; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.checklist li { margin: 0; border-bottom: 1px solid var(--line); }
+.checklist li:last-child { border-bottom: 0; }
+.checklist label { display: flex; gap: 12px; align-items: flex-start; padding: 10px 14px; cursor: pointer; }
+.checklist input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); flex: none; }
+.checklist input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted); }
+.check-tools { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin: -6px 0 18px; }
+.check-tools button { font: inherit; color: var(--accent); background: none; border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 28px; max-width: 70ch; }
+.pager a { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--fg); background: var(--surface); font-weight: 500; font-size: 14.5px; line-height: 1.35; }
+.pager a:hover { border-color: var(--accent); }
+.pager small { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--muted); font-weight: 400; margin-bottom: 2px; }
+.pager .next { text-align: right; }
+.sources .prose { font-size: 14.5px; }
+
+/* ---------- phone ---------- */
+.mbar { display: none; }
+@media (max-width: 860px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .rail { position: fixed; inset: 0; z-index: 30; max-height: none; background: var(--bg); padding: calc(64px + env(safe-area-inset-top, 0px)) 16px 24px; transform: translateX(-100%); transition: transform .2s; }
+  .rail.open { transform: none; }
+  .rail .brand, .rail .gauge { display: none; }
+  .mbar { display: flex; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40; align-items: center; gap: 10px; margin-inline: -16px; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .mbar button { font: 600 14px var(--body); color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  .mbar .where { min-width: 0; flex: 1; font-size: 13.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mbar .track { width: 64px; margin: 0; flex: none; }
+  html { scroll-padding-top: 64px; }
+  .pager { grid-template-columns: 1fr; }
+  .pager .next { text-align: left; }
+}
+</style>
+
+<div class="shell" id="top">
+  <aside class="rail" id="rail" aria-label="Chapters">
+    <a class="brand" href="#top">P1S Printing Manual<small>Bambu Lab P1S · 0.4 mm nozzle</small></a>
+    <div class="gauge" aria-hidden="true">
+      <div class="gauge-top"><span>Layer <b id="layerNow">0</b> / 11</span><span id="pct">0%</span></div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+    </div>
+    <ul class="toc" id="toc">
+<li class="grp">Get a model</li>
+<li><a href="#ch1" data-target="ch1"><span class="num">01</span><span class="lbl">Something to hold</span></a></li>
+<li><a href="#ch2" data-target="ch2"><span class="num">02</span><span class="lbl">Make it with AI</span></a></li>
+<li><a href="#ch3" data-target="ch3"><span class="num">03</span><span class="lbl">Download a model</span></a></li>
+<li><a href="#ch4" data-target="ch4"><span class="num">04</span><span class="lbl">Design it yourself</span></a></li>
+<li><a href="#ch5" data-target="ch5"><span class="num">05</span><span class="lbl">File formats</span></a></li>
+<li class="grp">Prepare and slice</li>
+<li><a href="#ch6" data-target="ch6"><span class="num">06</span><span class="lbl">Before you slice</span></a></li>
+<li><a href="#ch7" data-target="ch7"><span class="num">07</span><span class="lbl">Slicing in Bambu Studio</span></a></li>
+<li class="grp">Print</li>
+<li><a href="#ch8" data-target="ch8"><span class="num">08</span><span class="lbl">Ready the printer</span></a></li>
+<li><a href="#ch9" data-target="ch9"><span class="num">09</span><span class="lbl">Send the job</span></a></li>
+<li><a href="#ch10" data-target="ch10"><span class="num">10</span><span class="lbl">The print runs</span></a></li>
+<li><a href="#ch11" data-target="ch11"><span class="num">11</span><span class="lbl">After the print</span></a></li>
+<li class="grp-end"><a href="#sources" data-target="sources"><span class="num">··</span><span class="lbl">Sources</span></a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <div class="mbar">
+      <button type="button" id="menuBtn" aria-expanded="false" aria-controls="rail">Chapters</button>
+      <span class="where" id="where">Introduction</span>
+      <div class="track"><div class="fill" id="fill2"></div></div>
+    </div>
+
+    <header class="hero">
+      <div class="kicker">Workshop manual · from idea to object</div>
+      <h1>From Idea to Object: printing with the Bambu P1S</h1>
+      <p class="lead">This manual follows one print from the first idea to the finished object in your hand, in the order things actually happen. Each chapter ends where the next one begins. Click any chapter on the left, or any box in the diagram, to jump straight to it.</p>
+      <ul class="specs" aria-label="Printer at a glance">
+        <li>Build 256 × 256 × 256 mm</li><li>Nozzle up to 300 °C</li><li>Bed up to 100 °C</li><li>1.75 mm filament</li><li>Prints .gcode.3mf</li>
+      </ul>
+    </header>
+
+    <section class="journey" aria-labelledby="journeyTitle">
+      <h2 id="journeyTitle">The journey at a glance</h2>
+      <p>However you start, every model passes through Bambu Studio. Each box opens its chapter.</p>
+      <div class="diagram">
+<svg viewBox="0 0 760 712" role="img" aria-label="Three ways to get a model, one slicer, two ways to send, one printer">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="arrowhead"/></marker></defs>
+<g class="edges"><line x1="132" y1="112" x2="320" y2="156" marker-end="url(#arr)"/><line x1="380" y1="112" x2="380" y2="156" marker-end="url(#arr)"/><line x1="628" y1="112" x2="440" y2="156" marker-end="url(#arr)"/><line x1="380" y1="212" x2="380" y2="248" marker-end="url(#arr)"/><line x1="380" y1="304" x2="380" y2="340" marker-end="url(#arr)"/><line x1="320" y1="396" x2="132" y2="440" marker-end="url(#arr)"/><line x1="440" y1="396" x2="628" y2="440" marker-end="url(#arr)"/><line x1="132" y1="496" x2="320" y2="540" marker-end="url(#arr)"/><line x1="628" y1="496" x2="440" y2="540" marker-end="url(#arr)"/><line x1="380" y1="596" x2="380" y2="632" marker-end="url(#arr)"/></g>
+<text class="title" x="24" y="30">Three ways to get a model, one slicer, two ways to send, one printer</text>
+<a href="#ch2" class="node"><rect x="24.0" y="56" width="216" height="56" rx="8"/><text class="n" x="132" y="80">Generate with AI</text><text class="s" x="132" y="99">Ch 2 · script or image-to-3D</text></a>
+<a href="#ch3" class="node"><rect x="272.0" y="56" width="216" height="56" rx="8"/><text class="n" x="380" y="80">Download a model</text><text class="s" x="380" y="99">Ch 3 · MakerWorld, Printables</text></a>
+<a href="#ch4" class="node"><rect x="520.0" y="56" width="216" height="56" rx="8"/><text class="n" x="628" y="80">Design it yourself</text><text class="s" x="628" y="99">Ch 4 · Tinkercad, Blender, CAD</text></a>
+<a href="#ch5" class="node"><rect x="230.0" y="156" width="300" height="56" rx="8"/><text class="n" x="380" y="180">Model file</text><text class="s" x="380" y="199">STL · 3MF · OBJ · STEP (Ch 5)</text></a>
+<a href="#ch6" class="node"><rect x="200.0" y="248" width="360" height="56" rx="8"/><text class="n" x="380" y="272">Plan the print</text><text class="s" x="380" y="291">supports · material · colours · pauses (Ch 6)</text></a>
+<a href="#ch7" class="node main"><rect x="230.0" y="340" width="300" height="56" rx="8"/><text class="n" x="380" y="364">Slice in Bambu Studio</text><text class="s" x="380" y="383">outputs a .gcode.3mf (Ch 7)</text></a>
+<a href="#ch9" class="node"><rect x="24.0" y="440" width="216" height="56" rx="8"/><text class="n" x="132" y="464">Wirelessly over Wi-Fi</text><text class="s" x="132" y="483">IP + access code · Ch 9</text></a>
+<a href="#ch9" class="node"><rect x="520.0" y="440" width="216" height="56" rx="8"/><text class="n" x="628" y="464">microSD card</text><text class="s" x="628" y="483">carry the file · Ch 9</text></a>
+<a href="#ch8" class="node"><rect x="200.0" y="540" width="360" height="56" rx="8"/><text class="n" x="380" y="564">Prepare the P1S and print</text><text class="s" x="380" y="583">load filament · heat · level · watch (Ch 8, 10)</text></a>
+<a href="#ch11" class="node"><rect x="230.0" y="632" width="300" height="56" rx="8"/><text class="n" x="380" y="656">Object in your hand</text><text class="s" x="380" y="675">remove, clean up, troubleshoot (Ch 11)</text></a>
+</svg>
+      </div>
+    </section>
+
+<section class="chapter" id="ch1">
+  <header class="ch-head"><p class="eyebrow">Chapter 1 of 11 · Get a model</p>
+  <h2>It starts with something you want to hold</h2></header>
+  <div class="prose"><p>Every print begins before the printer is switched on. Someone needs a cable clip, a name tag, a replacement knob, or a decorative yin-yang for their desk. The printer cannot read your mind; it needs a 3D model, a digital description of the object's shape.</p>
+<p>That model can come from three places, and the rest of the story depends on which one you start with:</p>
+<ul>
+<li><strong>A concept in your head</strong> ("a box 40 mm wide with a lid"). You will describe it to an AI or draw it in a design tool.</li>
+<li><strong>A picture</strong> (a photo of a figurine, a sketch, a logo you own). An image-to-3D AI tool can turn it into a model, or you can trace it in a design tool.</li>
+<li><strong>An existing 3D model</strong> someone else already made. You download it from a model library and go straight to slicing.</li>
+</ul>
+<p>Before choosing, answer three questions about the object:</p>
+<ol>
+<li><strong>How big must it be?</strong> The P1S can print anything that fits in a 256 × 256 × 256 mm cube. Larger objects must be split into parts and glued.</li>
+<li><strong>Does it need to fit something real?</strong> A part that slides onto a pipe or clips into a slot needs measured dimensions (use calipers) and a design tool with exact numbers.</li>
+<li><strong>Is it decorative or functional?</strong> Decorative parts forgive small shape errors; functional parts need the right material, strength and tolerances.</li>
+</ol>
+<p>With those answers, pick your route: Chapter 2 (AI), Chapter 3 (download) or Chapter 4 (design it yourself).</p></div>
+  <nav class="pager" aria-label="Chapter navigation"><span></span><a class="next" href="#ch2"><small>Next · Chapter 2</small>Route A: Asking an AI to make the model</a></nav>
+</section>
+<section class="chapter" id="ch2">
+  <header class="ch-head"><p class="eyebrow">Chapter 2 of 11 · Get a model</p>
+  <h2>Route A: Asking an AI to make the model</h2></header>
+  <div class="prose"><p>There are two very different kinds of AI help, and they suit different objects.</p>
+<h3>A1. Chat assistants that write modelling code (Claude, ChatGPT, Gemini)</h3>
+<p>A chat assistant cannot hand you a mesh directly, but it can write a script that builds one. You run the script in a free modelling program, and the program produces the STL. This is how our workshop's yin-yang was made.</p>
+<ol>
+<li><strong>Describe the object precisely.</strong> Give dimensions in mm, the purpose, and the printer: <em>"Write an OpenSCAD script for a 50 mm yin-yang coin, 3 mm thick, with a keychain hole, printable on a Bambu P1S without supports."</em></li>
+<li><strong>Name the tool.</strong> Ask for <strong>OpenSCAD</strong> (simplest, exact dimensions), <strong>Blender Python</strong> (organic and artistic shapes) or <strong>CadQuery/FreeCAD Python</strong> (engineering parts).</li>
+<li><strong>Ask for parameters at the top</strong> so you can change sizes without asking again.</li>
+<li><strong>Run it.</strong> OpenSCAD: paste, press F5 to preview, F6 to render, then <em>File → Export → STL</em>. Blender: <em>Scripting</em> workspace → <em>New</em> → paste → <em>Run Script</em>.</li>
+<li><strong>Iterate.</strong> If something looks wrong, describe what you see ("the hole is too close to the edge") and ask for a fix.</li>
+</ol>
+<p>Best for: geometric parts, boxes, brackets, signs, name tags, anything with exact sizes.</p>
+<h3>A2. Generative 3D websites (text-to-3D and image-to-3D)</h3>
+<p>These services turn a sentence or a photo into a full 3D mesh in a few minutes. Most offer free credits after you sign in.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>What it does</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://makerworld.com/en/makerlab" target="_blank" rel="noopener">Bambu MakerLab Image to 3D</a></td>
+<td>Photo → printable model; lets you choose Hunyuan, Meshy or Tripo engines</td>
+<td>Free to generate; downloading costs MakerWorld credits; opens straight into Bambu Studio</td>
+</tr>
+<tr>
+<td><a href="https://www.meshy.ai" target="_blank" rel="noopener">Meshy</a></td>
+<td>Text or image → 3D, exports STL/OBJ/3MF</td>
+<td>Free tier with monthly credits</td>
+</tr>
+<tr>
+<td><a href="https://www.tripo3d.ai" target="_blank" rel="noopener">Tripo AI</a></td>
+<td>Text or image → 3D</td>
+<td>Free credits on sign-up</td>
+</tr>
+<tr>
+<td><a href="https://3d.hunyuan.tencent.com" target="_blank" rel="noopener">Hunyuan3D</a></td>
+<td>Image → 3D, open-weights model</td>
+<td>Free web demo</td>
+</tr>
+</tbody>
+</table></div>
+<p>Tips for good results:</p>
+<ul>
+<li>Use an image with <strong>only the subject on a plain, empty background</strong>.</li>
+<li>Generated models are often hollow shells, have thin fragile bits, or float above the floor. Always check them in Bambu Studio (Chapter 7) and let it repair the mesh when asked.</li>
+<li>Scale the model to real millimetres before printing; AI tools often export at an arbitrary size.</li>
+<li>Respect copyright: do not generate models of trademarked characters or logos you do not own.</li>
+</ul>
+<p>Best for: figurines, sculptures, organic shapes, gifts. Not suited to parts that must fit precisely.</p></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch1"><small>Previous · Chapter 1</small>It starts with something you want to hold</a><a class="next" href="#ch3"><small>Next · Chapter 3</small>Route B: Borrowing a model someone already made</a></nav>
+</section>
+<section class="chapter" id="ch3">
+  <header class="ch-head"><p class="eyebrow">Chapter 3 of 11 · Get a model</p>
+  <h2>Route B: Borrowing a model someone already made</h2></header>
+  <div class="prose"><p>Often the fastest route is that someone has already designed what you need. Millions of free models are shared online.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Why use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://makerworld.com" target="_blank" rel="noopener">MakerWorld</a></td>
+<td>Bambu Lab's own library. Many models come with ready-made Bambu Studio print profiles for the P1S, so you can open them and print with one click.</td>
+</tr>
+<tr>
+<td><a href="https://www.printables.com" target="_blank" rel="noopener">Printables</a></td>
+<td>Large, well-moderated library by Prusa; strong on functional parts.</td>
+</tr>
+<tr>
+<td><a href="https://www.thingiverse.com" target="_blank" rel="noopener">Thingiverse</a></td>
+<td>The oldest and largest library; quality varies, so check the comments and "makes".</td>
+</tr>
+<tr>
+<td><a href="https://thangs.com" target="_blank" rel="noopener">Thangs</a></td>
+<td>Search engine across many libraries, including geometric search for similar shapes.</td>
+</tr>
+<tr>
+<td><a href="https://cults3d.com" target="_blank" rel="noopener">Cults3D</a></td>
+<td>Mix of free and paid designer models.</td>
+</tr>
+</tbody>
+</table></div>
+<p>How to choose a good model:</p>
+<ol>
+<li>Look at <strong>photos of real prints</strong> ("makes"), not only the designer's render.</li>
+<li>Read the comments for print problems and recommended settings.</li>
+<li>Prefer models offered as <strong>3MF with a print profile</strong>, or at least a clean STL.</li>
+<li><strong>Check the licence.</strong> Most are Creative Commons; "NC" (non-commercial) means you may not sell the prints, and "ND" means you may not modify the design. Keep the attribution if you share it.</li>
+</ol>
+<p>Download the file and go to Chapter 5 to check its format.</p></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch2"><small>Previous · Chapter 2</small>Route A: Asking an AI to make the model</a><a class="next" href="#ch4"><small>Next · Chapter 4</small>Route C: Designing it yourself</a></nav>
+</section>
+<section class="chapter" id="ch4">
+  <header class="ch-head"><p class="eyebrow">Chapter 4 of 11 · Get a model</p>
+  <h2>Route C: Designing it yourself</h2></header>
+  <div class="prose"><p>When nothing online fits and AI cannot get the dimensions right, you design the part. All the tools below are free; pick by the kind of object.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Runs in</th>
+<th>Licence</th>
+<th>Best for</th>
+<th>Learning curve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://www.tinkercad.com" target="_blank" rel="noopener">Tinkercad</a></td>
+<td>Browser</td>
+<td>Free (Autodesk account)</td>
+<td>First-timers; name tags, simple boxes, combining shapes</td>
+<td>Minutes</td>
+</tr>
+<tr>
+<td><a href="https://openscad.org" target="_blank" rel="noopener">OpenSCAD</a></td>
+<td>Desktop</td>
+<td>Open source</td>
+<td>Parametric parts written as code; pairs well with AI-written scripts</td>
+<td>Hours</td>
+</tr>
+<tr>
+<td><a href="https://www.blender.org" target="_blank" rel="noopener">Blender</a></td>
+<td>Desktop</td>
+<td>Open source</td>
+<td>Sculpting, organic and artistic models, Python scripting</td>
+<td>Days</td>
+</tr>
+<tr>
+<td><a href="https://www.freecad.org" target="_blank" rel="noopener">FreeCAD</a></td>
+<td>Desktop</td>
+<td>Open source</td>
+<td>Precise engineering parts with sketches and constraints</td>
+<td>Days</td>
+</tr>
+<tr>
+<td><a href="https://www.onshape.com" target="_blank" rel="noopener">Onshape</a></td>
+<td>Browser</td>
+<td>Free plan (designs are public)</td>
+<td>Professional CAD, mechanical assemblies</td>
+<td>Days</td>
+</tr>
+<tr>
+<td><a href="https://www.blockscad3d.com" target="_blank" rel="noopener">BlocksCAD</a></td>
+<td>Browser</td>
+<td>Free</td>
+<td>Block-based coding, great for teaching</td>
+<td>Minutes</td>
+</tr>
+<tr>
+<td><a href="https://app.sketchup.com" target="_blank" rel="noopener">SketchUp Free</a></td>
+<td>Browser</td>
+<td>Free plan</td>
+<td>Architecture-style models, furniture</td>
+<td>Hours</td>
+</tr>
+<tr>
+<td><a href="https://womp.com" target="_blank" rel="noopener">Womp</a></td>
+<td>Browser</td>
+<td>Free plan</td>
+<td>Soft, rounded artistic shapes</td>
+<td>Hours</td>
+</tr>
+</tbody>
+</table></div>
+<p>A few design rules make almost any model print well on an FDM printer like the P1S:</p>
+<ul>
+<li><strong>Give it a flat base.</strong> The first layer must stick to the plate.</li>
+<li><strong>Avoid overhangs steeper than about 45°</strong> from vertical, or plan for supports (Chapter 6).</li>
+<li><strong>Walls at least 1.2 mm thick</strong> (three nozzle widths); text raised at least 0.6 mm and 5 mm tall.</li>
+<li><strong>Leave 0.2–0.3 mm clearance</strong> between parts that must fit together.</li>
+<li><strong>Model in millimetres</strong> and export as STL or 3MF (Chapter 5).</li>
+</ul></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch3"><small>Previous · Chapter 3</small>Route B: Borrowing a model someone already made</a><a class="next" href="#ch5"><small>Next · Chapter 5</small>Getting the file into the right format</a></nav>
+</section>
+<section class="chapter" id="ch5">
+  <header class="ch-head"><p class="eyebrow">Chapter 5 of 11 · Get a model</p>
+  <h2>Getting the file into the right format</h2></header>
+  <div class="prose"><p>Whichever route you took, you now hold a file. There are two families of files, and mixing them up is the most common beginner confusion:</p>
+<ul>
+<li><strong>Model files</strong> describe the <em>shape</em>. You bring these to the slicer.</li>
+<li><strong>G-code</strong> describes the <em>printer's movements</em>: where the nozzle goes, how hot it is, how much plastic to push. The slicer creates it for you; you almost never write or download it.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Family</th>
+<th>What it holds</th>
+<th>Use it when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>STL</strong></td>
+<td>Model</td>
+<td>Surface triangles only; no units, no colour</td>
+<td>The universal format; every tool exports it</td>
+</tr>
+<tr>
+<td><strong>3MF</strong></td>
+<td>Model + project</td>
+<td>Shape, units, colours, multiple parts, and (from Bambu Studio) full print settings</td>
+<td>Best choice for Bambu; keeps colour and settings together</td>
+</tr>
+<tr>
+<td><strong>OBJ</strong></td>
+<td>Model</td>
+<td>Shape, sometimes colour/texture</td>
+<td>Common from AI and Blender; Bambu Studio imports it</td>
+</tr>
+<tr>
+<td><strong>STEP</strong></td>
+<td>Model (CAD)</td>
+<td>Exact mathematical surfaces</td>
+<td>Engineering parts from FreeCAD/Onshape; Bambu Studio imports it</td>
+</tr>
+<tr>
+<td><strong>.gcode.3mf</strong></td>
+<td>Print job</td>
+<td>Sliced G-code for a Bambu printer, plus preview</td>
+<td>What Bambu Studio sends to the P1S or saves to the microSD card</td>
+</tr>
+</tbody>
+</table></div>
+<p>Rules of thumb:</p>
+<ul>
+<li>Bring an <strong>STL, 3MF, OBJ or STEP</strong> to Bambu Studio. The printer itself needs the sliced <strong>.gcode.3mf</strong> that Bambu Studio produces.</li>
+<li><strong>Do not print G-code downloaded from the internet</strong> that was sliced for another printer. It may use the wrong temperatures or move the nozzle into the frame.</li>
+<li>If a model came from an AI tool, check its <strong>size in mm</strong> on import; scale it if it arrives tiny or huge.</li>
+</ul>
+<h3>What the P1S accepts, and what Bambu Studio accepts</h3>
+<p>The printer and the slicer accept different files. The printer never sees your STL; it only runs the sliced job that Bambu Studio makes from it.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Where the file goes</th>
+<th>Accepted formats</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Bambu Studio (import)</strong></td>
+<td>STL, 3MF, OBJ, STEP / STP, AMF, SVG</td>
+<td>SVG is a flat drawing (logo, text outline) that Studio extrudes into 3D</td>
+</tr>
+<tr>
+<td><strong>P1S printer (to print)</strong></td>
+<td><strong>.gcode.3mf</strong> (sliced plate file)</td>
+<td>Arrives wirelessly from Bambu Studio, or from the microSD card's file list</td>
+</tr>
+<tr>
+<td><strong>Not printable directly</strong></td>
+<td>STL, OBJ, STEP, plain 3MF without G-code, images</td>
+<td>Must be sliced in Bambu Studio first</td>
+</tr>
+</tbody>
+</table></div>
+<p>In short: <strong>model file → Bambu Studio → .gcode.3mf → P1S.</strong> Plain .gcode exported by other slicers is not the supported route for the P1S; slice in Bambu Studio or OrcaSlicer with the P1S profile and send the .gcode.3mf.</p></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch4"><small>Previous · Chapter 4</small>Route C: Designing it yourself</a><a class="next" href="#ch6"><small>Next · Chapter 6</small>Thinking before you slice</a></nav>
+</section>
+<section class="chapter" id="ch6">
+  <header class="ch-head"><p class="eyebrow">Chapter 6 of 11 · Prepare and slice</p>
+  <h2>Thinking before you slice</h2></header>
+  <div class="prose"><p>The model is ready, but a good print is decided before you press <em>Slice</em>. Walk through these six questions in order.</p>
+<h3>1. Which way up?</h3>
+<p>The printer builds upward, one layer at a time (typically 0.2 mm), so orientation decides strength, looks and whether supports are needed.</p>
+<ul>
+<li>Put the <strong>largest flat face on the plate</strong>.</li>
+<li>Layers are weakest when pulled apart, so lay hooks and clips so the force runs <em>along</em> the layers, not across them.</li>
+<li>The face touching the plate comes out smooth (or textured, on a textured plate); the top face shows fine lines.</li>
+</ul>
+<h3>2. Does it need supports?</h3>
+<p>Plastic cannot be laid on thin air. Any surface that overhangs more than about 45°, or a bridge longer than about 10 mm, needs something underneath.</p>
+<ul>
+<li><strong>No supports</strong>: flat-bottomed objects, reliefs, boxes, most well-designed models. Try re-orienting first.</li>
+<li><strong>Normal supports</strong>: straight columns under the overhang; strong but leave more marks.</li>
+<li><strong>Tree supports</strong>: branch-like supports that touch only where needed; easier to remove, less waste. Usually the better choice for figurines and AI-generated shapes.</li>
+<li>In Bambu Studio, use <strong>support painting</strong> to add supports only where they are needed, or block them where they would scar a visible face.</li>
+</ul>
+<h3>3. Which material?</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Filament</th>
+<th>Nozzle °C</th>
+<th>Bed °C</th>
+<th>Character</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PLA</td>
+<td>190–230</td>
+<td>55–65</td>
+<td>Easiest, low smell, slightly brittle, softens at about 55 °C</td>
+<td>Workshop default, prototypes, decor</td>
+</tr>
+<tr>
+<td>PETG</td>
+<td>230–260</td>
+<td>70–80</td>
+<td>Tougher, slightly flexible, a little stringy</td>
+<td>Outdoor or functional parts</td>
+</tr>
+<tr>
+<td>TPU</td>
+<td>200–240</td>
+<td>35–45</td>
+<td>Rubber-like, flexible; print slowly; not through the AMS</td>
+<td>Phone cases, grips, bumpers</td>
+</tr>
+<tr>
+<td>ABS / ASA</td>
+<td>240–280</td>
+<td>90–100</td>
+<td>Heat-resistant; needs the P1S door closed and ventilation</td>
+<td>Car parts, hot environments</td>
+</tr>
+</tbody>
+</table></div>
+<p>The P1S reaches 300 °C at the nozzle and 100 °C on the bed, so all of these work. The stock nozzle is not hardened, so avoid carbon- or glass-fibre filaments unless you fit a hardened-steel nozzle. Match the <strong>build plate</strong> to the filament: the textured PEI plate works for PLA, PETG and ABS.</p>
+<h3>4. One colour or several?</h3>
+<ul>
+<li><strong>With an AMS</strong> (automatic material system): assign a filament to each part, or use the <strong>paint tool</strong> in Bambu Studio to colour faces. The printer swaps filament automatically.</li>
+<li><strong>Without an AMS</strong>: use a <strong>filament change at a layer</strong> height. In the Preview tab, right-click the layer slider at the height where the new colour should start, and choose <em>Add color change</em> (or <em>Add pause</em>). The printer stops, you swap the spool, and it continues. Ideal for raised text, logos and the yin-yang relief.</li>
+</ul>
+<h3>5. Do you want to pause mid-print?</h3>
+<p>Pausing lets you use the printer in flexible ways:</p>
+<ul>
+<li><strong>Embed objects</strong>: pause at the layer just above a hidden pocket, drop in a magnet, nut, coin or NFC tag, and resume. The printer seals it inside.</li>
+<li><strong>Manual colour swap</strong>, as above.</li>
+<li><strong>Check progress</strong>: you can also pause or stop any time from the printer screen, Bambu Studio's Device tab or the Bambu Handy app.</li>
+</ul>
+<h3>6. How strong and how fast?</h3>
+<ul>
+<li><strong>Layer height</strong>: 0.20 mm is the standard balance; 0.12 mm for fine detail (slower); 0.28 mm for draft speed.</li>
+<li><strong>Wall loops</strong>: 2 is normal; 4 for strong parts. Walls add more strength than infill.</li>
+<li><strong>Infill</strong>: 10–15% for decor, 25–40% for functional parts. Gyroid is a good all-round pattern.</li>
+<li><strong>Brim</strong>: a thin skirt around the base that helps tall or small-footprint parts stay stuck.</li>
+</ul></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch5"><small>Previous · Chapter 5</small>Getting the file into the right format</a><a class="next" href="#ch7"><small>Next · Chapter 7</small>Slicing: turning the shape into instructions</a></nav>
+</section>
+<section class="chapter" id="ch7">
+  <header class="ch-head"><p class="eyebrow">Chapter 7 of 11 · Prepare and slice</p>
+  <h2>Slicing: turning the shape into instructions</h2></header>
+  <div class="prose"><p>Slicing cuts the model into hundreds of thin horizontal layers and works out the nozzle path for each one. The result is the G-code the printer follows.</p>
+<h3>Getting to know Bambu Studio</h3>
+<p><a href="https://bambulab.com/en/download/studio" target="_blank" rel="noopener">Bambu Studio</a> is free for Windows, macOS and Linux. It has four tabs across the top:</p>
+<ul>
+<li><strong>Home</strong>: recent projects and a MakerWorld browser.</li>
+<li><strong>Prepare</strong>: the build plate where you place, scale and set up models.</li>
+<li><strong>Preview</strong>: the sliced result, layer by layer, with time and filament estimates.</li>
+<li><strong>Device</strong>: live view of your printer, its camera, temperatures and controls.</li>
+</ul>
+<h3>Slicing step by step</h3>
+<ol>
+<li><strong>Choose the presets</strong> (left panel): Printer <em>Bambu Lab P1S 0.4 nozzle</em>; Plate type <em>Textured PEI Plate</em>; Filament matching the spool you will load (e.g. <em>Bambu PLA Basic</em>); Process <em>0.20 mm Standard @BBL</em>.</li>
+<li><strong>Import</strong> the model: drag the STL/3MF/OBJ/STEP onto the plate, or <em>File → Import</em>. If Studio offers to repair the mesh, accept.</li>
+<li><strong>Check the size.</strong> Select the object and read its dimensions in the right panel. Scale if needed, keeping proportions locked.</li>
+<li><strong>Orient it.</strong> Use <em>Lay on face</em> (select a flat face to put on the plate) or <em>Auto orient</em>. Use <em>Arrange</em> to space several objects.</li>
+<li><strong>Apply your Chapter 6 decisions</strong>: supports on/off and type, wall loops, infill, brim, and per-part filament or paint colours.</li>
+<li><strong>Slice plate.</strong> Studio switches to Preview.</li>
+<li><strong>Inspect the preview.</strong> Drag the layer slider and look for floating islands, missing thin parts, or supports where you did not want them. Note the <strong>estimated time and grams of filament</strong>.</li>
+<li><strong>Add pauses or colour changes</strong> on the layer slider if planned.</li>
+<li><strong>Save the project</strong> (<em>File → Save Project</em>, a .3mf) so you can reprint or tweak later.</li>
+</ol>
+<h3>Pre-send checklist in Bambu Studio</h3>
+<p>Tick every item before you press <em>Send</em>. Each takes seconds, and each one catches a common failed print.</p>
+<ul class="checklist">
+<li class="check"><label><input type="checkbox"><span><strong>Printer preset</strong> is <em>Bambu Lab P1S 0.4 nozzle</em> (matches the nozzle actually fitted)</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Plate type</strong> matches the plate in the printer (e.g. Textured PEI)</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Filament preset</strong> matches the spool loaded (type and brand); with an AMS, each colour mapped to the right slot</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Size</strong> checked in mm, and the model fits inside 256 × 256 × 256 mm</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Mesh repaired</strong> if Studio reported errors on import</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Orientation</strong>: largest flat face on the plate (<em>Lay on face</em>); no part floating above the plate</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Supports</strong> decided: off, normal or tree; painted where needed</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Process settings</strong> chosen: layer height, wall loops, infill, brim if the base is small</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Plate sliced</strong> and <strong>Preview</strong> inspected layer by layer: no gaps, no floating islands, supports where expected</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Time and filament</strong> estimate checked against what is left on the spool</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Pauses or colour changes</strong> added on the layer slider, if planned</span></label></li>
+<li class="check"><label><input type="checkbox"><span><strong>Project saved</strong> (.3mf) so it can be reprinted</span></label></li>
+<li class="check"><label><input type="checkbox"><span>In the <strong>Print</strong> dialog: correct printer selected, <strong>Bed leveling</strong> ticked, timelapse on or off as wanted</span></label></li>
+<li class="check"><label><input type="checkbox"><span>At the printer: <strong>plate clean and seated</strong>, filament loaded, nothing inside the chamber</span></label></li>
+</ul>
+<h3>Alternatives to Bambu Studio</h3>
+<ul>
+<li><a href="https://github.com/SoftFever/OrcaSlicer" target="_blank" rel="noopener">OrcaSlicer</a>: free, open-source desktop slicer derived from Bambu Studio, with built-in P1S profiles and extra calibration tools. It can also send jobs to the P1S.</li>
+<li><a href="https://www.prusa3d.com/page/prusaslicer_424/" target="_blank" rel="noopener">PrusaSlicer</a> and <a href="https://ultimaker.com/software/ultimaker-cura/" target="_blank" rel="noopener">Cura</a>: open-source desktop slicers; usable with a P1S profile, but sending jobs is less convenient.</li>
+<li><a href="https://grid.space/kiri/" target="_blank" rel="noopener">Kiri:Moto</a>: free, open-source slicer that runs <strong>entirely in the browser</strong>, handy on locked-down laptops. Its output needs extra care to work on a Bambu printer, so treat it as a learning tool and use Bambu Studio or OrcaSlicer for real P1S prints.</li>
+</ul></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch6"><small>Previous · Chapter 6</small>Thinking before you slice</a><a class="next" href="#ch8"><small>Next · Chapter 8</small>Getting the printer ready</a></nav>
+</section>
+<section class="chapter" id="ch8">
+  <header class="ch-head"><p class="eyebrow">Chapter 8 of 11 · Print</p>
+  <h2>Getting the printer ready</h2></header>
+  <div class="prose"><p>While the file is ready on the laptop, walk over to the printer. Three things must be right: the plate, the filament, and the printer's health.</p>
+<h3>Meet the P1S</h3>
+<ul>
+<li>An enclosed box, so heat stays in and fumes stay controlled. Keep the <strong>door closed</strong> while printing.</li>
+<li><strong>Build volume</strong> 256 × 256 × 256 mm; <strong>nozzle</strong> 0.4 mm as standard, for 1.75 mm filament.</li>
+<li>The <strong>hotend</strong> (nozzle heater) reaches up to 300 °C; the <strong>heatbed</strong> reaches up to 100 °C.</li>
+<li>A <strong>spool holder</strong> on the back, or an optional <strong>AMS</strong> unit on top holding up to four spools.</li>
+<li>A small <strong>screen with buttons</strong> on the front, a <strong>microSD card slot</strong>, Wi-Fi and a camera.</li>
+</ul>
+<h3>Prepare the build plate</h3>
+<ol>
+<li>Lift the flexible steel plate off the magnetic bed.</li>
+<li>Wash it with warm water and dish soap, rinse, and dry fully. Fingerprints are the number-one cause of prints not sticking.</li>
+<li>Put it back, pressing its rear notches against the two pins at the back of the bed so it sits square.</li>
+<li>Make sure the plate in the printer matches the plate type chosen in Bambu Studio.</li>
+</ol>
+<h3>Load the filament (external spool, no AMS)</h3>
+<ol>
+<li>Hang the spool on the rear holder so it unwinds without twisting.</li>
+<li>Cut the filament end at an angle with flush cutters for a sharp tip, and straighten the first 10 cm.</li>
+<li>Push the end into the <strong>PTFE tube</strong> at the back until it reaches the extruder at the top of the toolhead.</li>
+<li>On the screen, open <strong>Filament → Load</strong>. The printer <strong>heats the nozzle</strong> to the filament's temperature (around 220 °C for PLA), which takes about a minute.</li>
+<li>When prompted, keep pushing gently until you feel the <strong>extruder gears grab</strong> the filament and pull it in.</li>
+<li>The printer <strong>purges</strong> a short length through the nozzle and drops it down the waste chute at the back. When clean, new-colour plastic comes out, loading is done.</li>
+<li>To change spools later, use <strong>Filament → Unload</strong>: it heats the nozzle and pushes the filament back out.</li>
+</ol>
+<p>With an AMS, simply feed the filament end into a free slot; the AMS pulls it in, reads Bambu RFID spools automatically, and loads the right slot when a print starts.</p>
+<h3>Quick health check</h3>
+<ul>
+<li>The nozzle is clean, with no blob of old plastic stuck to it.</li>
+<li>Nothing is lying inside the printer or on the plate.</li>
+<li>The waste chute at the back is not clogged.</li>
+</ul></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch7"><small>Previous · Chapter 7</small>Slicing: turning the shape into instructions</a><a class="next" href="#ch9"><small>Next · Chapter 9</small>Sending the job to the printer</a></nav>
+</section>
+<section class="chapter" id="ch9">
+  <header class="ch-head"><p class="eyebrow">Chapter 9 of 11 · Print</p>
+  <h2>Sending the job to the printer</h2></header>
+  <div class="prose"><p>The sliced plate is on the laptop; now it has to reach the P1S. There are exactly two ways: <strong>wirelessly over Wi-Fi</strong>, or <strong>by hand on a microSD card</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Way</th>
+<th>Needs</th>
+<th>Good for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Wireless</td>
+<td>Laptop and P1S on the <strong>same Wi-Fi network</strong>, Bambu Studio, the printer's <strong>IP address</strong> and <strong>access code</strong></td>
+<td>Everyday printing; live camera and controls in Bambu Studio</td>
+</tr>
+<tr>
+<td>2. microSD card</td>
+<td>A microSD card and a card reader</td>
+<td>No network available, or Wi-Fi is down</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Way 1 — Wirelessly, over the same Wi-Fi</h3>
+<p>Bambu Studio talks to the printer directly across the Wi-Fi network. It identifies the printer by its IP address and proves it is allowed to use it with the access code.</p>
+<ol>
+<li><strong>Connect the printer to Wi-Fi.</strong> On the P1S screen, open <em>Settings → WLAN</em> (network settings) and join the network.</li>
+<li><strong>Note the IP address and access code.</strong> Both are shown in the printer's network settings. The access code is the printer's password; anyone with it on the same network can control the printer.</li>
+<li><strong>Connect the laptop to the same Wi-Fi network.</strong> Many guest and office networks block devices from seeing each other ("client isolation"). If the printer never appears, ask IT for a network that allows it, or use a dedicated router for the printer.</li>
+<li><strong>Insert a microSD card in the printer.</strong> When printing over the local network, the job is stored on the card before it prints.</li>
+<li><strong>Add the printer in Bambu Studio.</strong> Open the <strong>Device</strong> tab. The printer appears in the list; select it and enter the <strong>access code</strong>. If it does not appear, add it manually with its <strong>IP address</strong> and the access code.</li>
+<li><strong>Send the job.</strong> After slicing, click <strong>Print plate</strong>. In the dialog, check the printer, keep <strong>Bed leveling</strong> ticked, choose timelapse on or off, and (with an AMS) check the filament-to-slot mapping. Click <strong>Send</strong>.</li>
+<li><strong>Watch it.</strong> The Device tab now shows the printer's camera, temperatures and progress, with pause and stop buttons.</li>
+</ol>
+<p>Optional: logging into a Bambu Lab account in Bambu Studio and the Bambu Handy app also lets you watch the print from your phone when you are away from the office network. Sending still works the same way.</p>
+<h3>Way 2 — By hand, on a microSD card</h3>
+<ol>
+<li>After slicing, choose <strong>Export plate sliced file</strong> (the dropdown next to <em>Print plate</em>). This saves a <strong>.gcode.3mf</strong> file.</li>
+<li>Copy the file to a microSD card (FAT32 formatted works best) using a card reader.</li>
+<li>Insert the card into the printer's slot.</li>
+<li>On the printer screen, open the <strong>SD card</strong> file list, select your file, and press <strong>Print</strong>.</li>
+</ol>
+<p>A plain STL on the card will not print. The printer only understands the sliced .gcode.3mf from Bambu Studio.</p></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch8"><small>Previous · Chapter 8</small>Getting the printer ready</a><a class="next" href="#ch10"><small>Next · Chapter 10</small>The print comes to life</a></nav>
+</section>
+<section class="chapter" id="ch10">
+  <header class="ch-head"><p class="eyebrow">Chapter 10 of 11 · Print</p>
+  <h2>The print comes to life</h2></header>
+  <div class="prose"><p>The job has arrived. Nothing comes out of the nozzle for the first several minutes; that is normal. The printer is getting itself ready.</p>
+<h3>The preparation sequence</h3>
+<p>Times below are typical for PLA and will vary with filament, room temperature and settings.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>What happens</th>
+<th>Typical time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Bed heating</td>
+<td>The heatbed warms to the filament's bed temperature (about 55–65 °C for PLA). Hotter filaments like ABS at 90–100 °C take noticeably longer.</td>
+<td>1–5 min</td>
+</tr>
+<tr>
+<td>2. Homing and nozzle wipe</td>
+<td>The toolhead finds its zero position and wipes the nozzle on the brush at the back.</td>
+<td>Under 1 min</td>
+</tr>
+<tr>
+<td>3. Auto bed leveling</td>
+<td>The nozzle probes many points on the plate to map tiny height differences, so the first layer is even.</td>
+<td>2–4 min</td>
+</tr>
+<tr>
+<td>4. Nozzle heating</td>
+<td>The hotend heats to printing temperature (about 220 °C for PLA). It often overlaps with the earlier steps.</td>
+<td>About 1 min</td>
+</tr>
+<tr>
+<td>5. Purge line</td>
+<td>A short line of plastic is drawn at the front edge to prime the nozzle.</td>
+<td>Seconds</td>
+</tr>
+<tr>
+<td>6. First layer</td>
+<td>The slowest, most important layer.</td>
+<td>A few minutes</td>
+</tr>
+</tbody>
+</table></div>
+<p>In total, plan on <strong>roughly 5–10 minutes</strong> from <em>Send</em> to the first layer. Bambu Studio's time estimate covers the printing itself, so add this preparation time when planning a session.</p>
+<h3>Why heat matters</h3>
+<ul>
+<li><strong>Nozzle heating</strong> melts the filament so it can flow. Too cold gives weak, under-extruded layers; too hot gives stringing and blobs.</li>
+<li><strong>Bed heating</strong> keeps the bottom layers warm and slightly soft so they grip the plate and do not shrink and peel up (warping).</li>
+<li>The <strong>enclosure</strong> traps warm air. That helps ABS and ASA, but for PLA in a warm room, opening the top lid slightly can prevent heat creep.</li>
+</ul>
+<h3>Watching the print</h3>
+<ol>
+<li><strong>Stay for the first layer.</strong> It should be flat, slightly squashed and continuous. Gaps, loose strands or curling corners mean you should stop, clean the plate and try again.</li>
+<li>Watch remotely through the <strong>camera</strong> in Bambu Studio's Device tab or the <strong>Bambu Handy</strong> app.</li>
+<li><strong>Pause or stop</strong> from the printer screen, the Device tab or the app at any time.</li>
+<li>At a planned <strong>colour-change or pause</strong> layer, the printer parks the toolhead and beeps. Swap the filament (Unload → Load) or place your insert, then press <strong>Resume</strong>.</li>
+<li>Do not open the door or reach in while it moves. The nozzle is over 200 °C and the bed can be 100 °C.</li>
+</ol></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch9"><small>Previous · Chapter 9</small>Sending the job to the printer</a><a class="next" href="#ch11"><small>Next · Chapter 11</small>The object in your hand</a></nav>
+</section>
+<section class="chapter" id="ch11">
+  <header class="ch-head"><p class="eyebrow">Chapter 11 of 11 · Print</p>
+  <h2>The object in your hand</h2></header>
+  <div class="prose"><p>The printer beeps, the toolhead parks, and the story reaches its end, almost.</p>
+<h3>Taking the print off</h3>
+<ol>
+<li><strong>Wait a few minutes</strong> for the bed to cool. PLA parts often release by themselves once cool.</li>
+<li>Lift the flexible plate out and <strong>gently flex it</strong>; the part pops off. Avoid prying with metal tools on the plate surface.</li>
+<li>Remove supports and brims with <strong>flush cutters</strong> and pliers, cutting away from your hands.</li>
+<li>Clean up edges with a deburring tool or fine sandpaper if needed.</li>
+<li>Put the plate back, clear any purge waste, and leave the printer ready for the next person.</li>
+</ol>
+<h3>When things go wrong</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>Likely cause</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Print comes loose or corners lift</td>
+<td>Greasy plate, small base, cold room</td>
+<td>Wash the plate with soap; add a brim; close the door</td>
+</tr>
+<tr>
+<td>Spaghetti mess mid-print</td>
+<td>Part detached or no support under an overhang</td>
+<td>Stop the print; re-orient or add supports</td>
+</tr>
+<tr>
+<td>Thin strings between parts</td>
+<td>Wet filament or too hot</td>
+<td>Dry the filament; use the correct filament preset</td>
+</tr>
+<tr>
+<td>Missing layers or weak, gappy walls</td>
+<td>Clog or tangled spool</td>
+<td>Check the spool unwinds freely; unload and reload filament</td>
+</tr>
+<tr>
+<td>Printer not visible in Bambu Studio</td>
+<td>Different network or LAN access blocked</td>
+<td>Check both are on the same Wi-Fi; re-enter the access code; add the printer by IP; or use the microSD card</td>
+</tr>
+<tr>
+<td>File on microSD card not listed</td>
+<td>STL copied instead of sliced file</td>
+<td>Export <em>plate sliced file</em> (.gcode.3mf) from Bambu Studio</td>
+</tr>
+<tr>
+<td>Model is the wrong size</td>
+<td>AI or download used other units</td>
+<td>Scale in Bambu Studio before slicing</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Safety and care</h3>
+<ul>
+<li>Hot parts: the nozzle exceeds 200 °C and the bed reaches 100 °C.</li>
+<li>Keep PLA as the default in shared offices; print ABS/ASA only with good ventilation.</li>
+<li>Store filament sealed with desiccant; damp filament prints badly.</li>
+<li>Clean the plate regularly; keep the printer's firmware and Bambu Studio up to date.</li>
+</ul>
+<p>That is the full journey: an idea became a model, the model became layers, and the layers became an object you can hold. The next print is easier.</p></div>
+  <nav class="pager" aria-label="Chapter navigation"><a class="prev" href="#ch10"><small>Previous · Chapter 10</small>The print comes to life</a><a class="next" href="#top"><small>Finished</small>Back to the start</a></nav>
+</section>
+<section class="chapter sources" id="sources"><header class="ch-head"><h2>Sources</h2></header><div class="prose"><ul>
+<li><a href="https://wiki.bambulab.com/en/p1/manual/unboxing-p1s" target="_blank" rel="noopener">Bambu Lab Wiki — Unboxing the P1S</a> (build volume, temperatures, nozzle, materials, microSD)</li>
+<li><a href="https://wiki.bambulab.com/en/knowledge-sharing/enable-lan-mode" target="_blank" rel="noopener">Bambu Lab Wiki — Enable LAN mode</a></li>
+<li><a href="https://forum.bambulab.com/t/how-to-get-into-lan-mode-and-use-it/142072/1" target="_blank" rel="noopener">Bambu Lab Forum — How to get into LAN mode and use it</a></li>
+<li><a href="https://www.fabbaloo.com/?p=236060" target="_blank" rel="noopener">Fabbaloo — Bambu Lab integrates Meshy 6 into MakerLab</a> (MakerLab image-to-3D engines and credits)</li>
+<li><a href="https://manual.eg.poly.edu/index.php/Bambu_Studio_Guide" target="_blank" rel="noopener">NYU Tandon — Bambu Studio Guide</a> (formats Bambu Studio imports)</li>
+<li><a href="https://forum.bambulab.com/t/export-plate-sliced-file-3mf/110095" target="_blank" rel="noopener">Bambu Lab Forum — Export plate sliced file</a> (P1 series printing .gcode.3mf from microSD)</li>
+</ul>
+<p>Typical temperatures and preparation times are general guidance; always follow the filament maker's label and your own test prints.</p></div></section>
+  </main>
+</div>
+
+<script>
+(function () {
+  const links = Array.from(document.querySelectorAll('.toc a'));
+  const chapters = Array.from(document.querySelectorAll('section.chapter'));
+  const rail = document.getElementById('rail');
+  const btn = document.getElementById('menuBtn');
+  const where = document.getElementById('where');
+  const fills = [document.getElementById('fill'), document.getElementById('fill2')];
+  const layerNow = document.getElementById('layerNow');
+  const pct = document.getElementById('pct');
+
+  function update() {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let current = null;
+    for (const c of chapters) { if (c.offsetTop <= y) current = c; }
+    links.forEach(a => a.classList.toggle('active', current && a.dataset.target === current.id));
+    if (current) {
+      const n = current.id.startsWith('ch') ? Number(current.id.slice(2)) : 11;
+      layerNow.textContent = n;
+      const h = current.querySelector('h2').textContent;
+      where.textContent = current.id === 'sources' ? 'Sources' : 'Ch ' + n + ' · ' + h;
+    } else {
+      layerNow.textContent = 0; where.textContent = 'Introduction';
+    }
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const p = max > 0 ? Math.min(100, Math.round(window.scrollY / max * 100)) : 0;
+    fills.forEach(f => { f.style.width = p + '%'; });
+    pct.textContent = p + '%';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+
+  function setOpen(open) { rail.classList.toggle('open', open); btn.setAttribute('aria-expanded', String(open)); btn.textContent = open ? 'Close' : 'Chapters'; }
+  btn.addEventListener('click', () => setOpen(!rail.classList.contains('open')));
+  links.forEach(a => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+
+  // Pre-send checklist: count ticks, remember them on this device, allow reset
+  document.querySelectorAll('.checklist').forEach((list, li) => {
+    const boxes = Array.from(list.querySelectorAll('input[type=checkbox]'));
+    boxes.forEach((b, i) => { b.id = 'chk-' + li + '-' + i; });
+    const tools = document.createElement('div');
+    tools.className = 'check-tools';
+    tools.innerHTML = '<span class="count"></span><button type="button">Clear all ticks</button>';
+    list.after(tools);
+    const count = tools.querySelector('.count');
+    const key = 'p1s-checklist-' + li;
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { saved = []; }
+    boxes.forEach((b, i) => { b.checked = !!saved[i]; });
+    function refresh() {
+      const done = boxes.filter(b => b.checked).length;
+      count.textContent = done === boxes.length ? 'All ' + done + ' checks done. Ready to send.' : done + ' of ' + boxes.length + ' checked';
+      try { localStorage.setItem(key, JSON.stringify(boxes.map(b => b.checked))); } catch (e) {}
+    }
+    boxes.forEach(b => b.addEventListener('change', refresh));
+    tools.querySelector('button').addEventListener('click', () => { boxes.forEach(b => { b.checked = false; }); refresh(); });
+    refresh();
+  });
+})();
+</script>
